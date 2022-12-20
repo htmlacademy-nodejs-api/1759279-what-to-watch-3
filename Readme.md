@@ -1,7 +1,7 @@
 # Личный проект «Что посмотреть»
 
 * Студент: [Дарья Надоша](https://up.htmlacademy.ru/nodejs-api/3/user/1759279).
-* Наставник: [Михаил Кислый] (https://htmlacademy.ru/profile/smart-grizzly).
+* Наставник: `Неизвестно`.
 
 ---
 
