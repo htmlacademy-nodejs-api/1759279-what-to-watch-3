@@ -1,0 +1,118 @@
+{
+  "api": {
+    "titles": [
+      "Один дома",
+      "Реальная любовь",
+      "Мумия",
+      "Марли и я",
+      "Красотка",
+      "Титаник"
+    ],
+    "descriptions": [
+      "Мальчик-озорник задает жару грабителям. Лучшая комедия для создания праздничного настроения у всей семьи.",
+      "Любовь незабываемая и недосягаемая, вызывающая сожаление и экстатическая, неожиданная и нежеланная, неудобная и необъяснимая, неизящная и неравная. Любовь поистине правит всеми вокруг.",
+      "Расхитители египетских гробниц пробуждают мир царства мертвых. Хоррор из 1990-х с новаторскими спецэффектами.",
+      "Молодой журналист со своей женой переезжает в другой город на новое место работы. У них грандиозные планы: покупка дома, дети... Но сначала они заводят собаку. Кто бы мог подумать, что именно она станет главным испытанием в их жизни.",
+      "Миллионер снял даму полусвета — и влюбился на всю жизнь. Эталонный ромком с Ричардом Гиром и Джулией Робертс.",
+      "Запретная любовь на фоне гибели легендарного лайнера. Великий фильм-катастрофа — в отреставрированной версии."
+    ],
+    "genres": [
+      "comedy",
+      "crime",
+      "documentary",
+      "drama",
+      "horror",
+      "family",
+      "romance",
+      "scifi",
+      "thriller"
+    ],
+    "previews": [
+      "https://www.kinopoisk.ru/film/8124/",
+      "https://www.kinopoisk.ru/film/6144/",
+      "https://www.kinopoisk.ru/film/4484/",
+      "https://www.kinopoisk.ru/film/279850/",
+      "https://www.kinopoisk.ru/film/8125/",
+      "https://www.kinopoisk.ru/film/2213/"
+    ],
+    "videos": [
+      "https://www.kinopoisk.ru/film/8124/",
+      "https://www.kinopoisk.ru/film/6144/",
+      "https://www.kinopoisk.ru/film/4484/",
+      "https://www.kinopoisk.ru/film/279850/",
+      "https://www.kinopoisk.ru/film/8125/",
+      "https://www.kinopoisk.ru/film/2213/"
+    ],
+    "actors": [
+      "Маколей Калкин",
+      "Джо Пеши",
+      "Хью Грант",
+      "Билл Найи",
+      "Брендан Фрейзер",
+      "Рэйчел Вайс",
+      "Оуэн Уилсон",
+      "Дженнифер Энистон",
+      "Ричард Гир",
+      "Джулия Робертс",
+      "Леонардо ДиКаприо",
+      "Кейт Уинслет"
+    ],
+    "directors": [
+      "Крис Коламбус",
+      "Ричард Кёртис",
+      "Стивен Соммерс",
+      "Дэвид Фрэнкел",
+      "Гэрри Маршалл",
+      "Джеймс Кэмерон"
+    ],
+    "names": [
+      "Иван Иванов",
+      "Олег Сидоров",
+      "Джек Торренс",
+      "Антон Городецкий",
+      "Борис Гесер",
+      "Рокки Бальбоа"
+    ],
+    "emails": [
+      "test@pisem.local",
+       "freedom@pisem.local",
+       "rolan@pochta.local",
+       "author@mir.local",
+       "test@lost.loca",
+       "kujo-fan@story.local"
+    ],
+    "avatars": [
+      "user.jpg",
+      "photo.jpg",
+      "awesome-avatar.jpg",
+      "roland.jpg",
+      "smit.jpg",
+      "coffee.jpg"
+    ],
+    "posters": [
+      "poster_homealone.jpg",
+      "poster_loveactually.jpg",
+      "poster_themummy.jpg",
+      "poster_marley&me.jpg",
+      "poster_prettywoman.jpg",
+      "poster_titanic.jpg"
+    ],
+    "backgroundImages": [
+      "homealone.jpg",
+      "loveactually.jpg",
+      "themummy.jpg",
+      "marley&me.jpg",
+      "prettywoman.jpg",
+      "titanic.jpg"
+    ],
+    "colorBackgroundImages": [
+      "red",
+      "green",
+      "blue",
+      "yellow",
+      "grey",
+      "pink"
+    ]
+  }
+}
+
