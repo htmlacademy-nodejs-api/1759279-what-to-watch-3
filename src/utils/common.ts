@@ -1,10 +1,10 @@
-import { Film } from '../types/film.type.js';
-
+import { FilmType } from '../types/film.type.js';
+import crypto from 'crypto';
 
 export const createFilm = (row: string) => {
   const tokens = row.replace('\n', '').split('\t');
 
-  const [title, description, createdDate, genre, filmYear, rating, preview, video, actors, director, filmLength, commentsCount, firstname, lastname, email, avatar, password, poster,
+  const [title, description, createdDate, genre, filmYear, rating, preview, video, actors, director, filmLength, commentsCount, email, avatarPath, firstname, lastname, poster,
     backgroundImage, colorBackgroundImage] = tokens;
 
   return {
@@ -12,22 +12,28 @@ export const createFilm = (row: string) => {
     description,
     filmDate: new Date(createdDate),
     genre: genre.split(',')
-      .map((genreType) => ({genreType})),
+      .map((genreType) => ({ genreType })),
     filmYear: Number.parseInt(filmYear, 10),
     rating: Number.parseInt(rating, 10),
     preview,
     video,
     actors: actors.split(',')
-      .map((actorsName) => ({actorsName})),
+      .map((actorsName) => ({ actorsName })),
     director,
     filmLength: Number.parseInt(filmLength, 10),
     commentsCount: Number.parseInt(commentsCount, 10),
-    user: {firstname, lastname, email, avatar, password},
+    user: { email, avatarPath, firstname, lastname },
     poster,
     backgroundImage,
     colorBackgroundImage,
-  } as Film;
+  } as unknown as FilmType;
 };
 
 export const getErrorMessage = (error: unknown):
 string => error instanceof Error ? error.message : '';
+
+export const createSHA256 = (line: string, salt: string): string => {
+  const shaHasher = crypto.createHmac('sha256', salt);
+
+  return shaHasher.update(line).digest('hex');
+};
