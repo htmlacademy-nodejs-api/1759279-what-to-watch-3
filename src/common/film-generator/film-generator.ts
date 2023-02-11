@@ -45,8 +45,7 @@ export default class FilmGenerator implements FilmGeneratorInterface {
     const [firstname, lastname] = author.split(' ');
 
     return [
-      title, description, filmDate, genre, filmYear, rating, preview, video,
-      actors, director, filmLength, commentsCount , firstname, lastname,
+      title, description, filmDate, genre, filmYear, rating, preview, video, actors, director, filmLength, commentsCount , firstname, lastname,
       email, avatar, poster, backgroundImage, colorBackgroundImage,
     ].join('\t');
   }
