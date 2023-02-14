@@ -1,0 +1,348 @@
+openapi: 3.1.0
+info:
+  title: API сервер для учебного проекта «Что посмотреть».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Что посмотреть».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 2.0.0
+tags:
+  - name: films
+    description: Действия с фильмами.
+  - name: genres
+    description: Действия с жанрами.
+  - name: comments
+    description: Действия с комментариями.
+  - name: users
+    description: Действия с пользователем.
+paths:
+
+  /users/register:
+     post:
+      tags:
+         - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя.
+      requestBody:
+         description: Информация для создания нового пользователя.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createUser'
+         required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref:'#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+
+  /users/login:
+     post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля
+
+     get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+  /users/{userId}/avatar:
+     post:
+      tags:
+        - users
+      summary: Загрузить изображение аватара
+      description: Загружает изображение аватара пользователя. Изображение
+         аватара должно быть в формате `png` или `jpg`.
+
+  /films: #TODO (?offset=60&limit=0)
+    get:
+      tags:
+        - films
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: number
+            example: 60
+        - in: query
+          name: limit
+          schema:
+            type: number
+            example: 0
+      summary: Получение списка фильмов
+      description: Получает список карточек с фильмами.
+      requestBody:
+         description: Список фильмов.
+         content:
+           application/json:
+             schema:
+               type: array
+               items:
+                $ref: '#/components/schemas/createdFilmShort'
+
+  /films/findByGenre?genre=value:
+    get:
+      tags:
+        - films
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: number
+            example: 60
+        - in: query
+          name: limit
+          schema:
+            type: number
+            example: 0
+      summary: Получение списка фильмов по жанрам
+      description: Получает список карточек с фильмами определенного жанра.
+      requestBody:
+         description: Список фильмов определенного жанра.
+         content:
+           application/json:
+             schema:
+               type: array
+               items:
+                $ref: '#/components/schemas/createdFilmShort'
+
+  /films/create:
+    post:
+      tags:
+        - films
+      summary: Добавление нового фильма
+      description: Добавляет новый фильм.
+      requestBody:
+         description: Информация для создания нового фильма.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createNewFilm'
+         required: true
+      responses:
+        "201":
+           description: Новый фильм создан.
+           content:
+             application/json:
+               schema:
+                 $ref: '#/components/schemas/createdFilmFull'
+
+        "409":
+            description: Поля заполнены неверно. Невозможно создать фильм.
+
+
+  /films/{filmId}:
+    get:
+      tags:
+        - films
+      summary: Получение карточки фильма
+      description: Получает карточку фильма.
+      requestBody:
+         description: Информация о фильме.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createdFilmFull'
+         required: true
+    patch:
+      tags:
+        - films
+      summary: Редактирование карточки фильма
+      description: Редактирует карточку фильма.
+      requestBody:
+         description: Информация об изменениях в карточке.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createdFilmFull'
+         required: true
+      responses:
+        204:
+          description: Карточка фильма обновлена
+        401:
+          description: Пользователь не авторизован, обновить карточку невозможно.
+        409:
+          description: Введены некорректные данные, обновить карточку невозможно.
+
+    delete:
+      tags:
+        - films
+      summary: Удаление карточки фильма
+      description: Удаляет карточку фильма.
+      requestBody:
+         description: Информация об изменениях в карточке.
+         required: true
+      responses:
+        204:
+          description: Карточка фильма удалена
+
+
+components:
+  schemas:
+    createUser:
+        type: object
+
+        properties:
+          email:
+            type: string
+            example: keks@htmlacademy.ru
+
+          firstname:
+            type: string
+            example: Keks
+
+          lastname:
+            type: string
+            example: Cat
+
+          password:
+            type: string
+            example: 123456
+    user:
+          type: object
+
+          properties:
+            id:
+              type: string
+              example: 6329c3d6a04ab1061c6425ea
+
+            email:
+              type: string
+              example: keks@htmlacademy.ru
+    createNewFilm:
+          type: object
+
+          properties:
+            title:
+              type: string
+              example: Один дома
+            description:
+              type: string
+              example: Мальчик-озорник задает жару грабителям. Лучшая комедия для создания праздничного настроения у всей семьи.
+            filmDate:
+              type: Date
+              example: 12/02/23
+            genre:
+              type: GenreType[]
+              example: comedy, family
+            filmYear:
+              type: number
+              example: 1990
+            preview:
+              type: string
+              example: https://www.kinopoisk.ru/film/8124/
+            video:
+              type: string
+              example: https://www.kinopoisk.ru/film/8124/
+            actors:
+              type: string[]
+              example: Маколей Калкин, Джо Пеши
+            director:
+              type: string
+              example: Крис Коламбус
+            filmLength:
+              type: number
+              example: 120
+            user:
+              $ref: '#/components/schemas/user'
+            poster:
+              type: string
+              example: poster_homealone.jpg
+            backgroundImage:
+              type: string
+              example: homealone.jpg
+            colorBackgroundImage:
+              type: string
+              example: red
+    createdFilmFull:
+          type: object
+
+          properties:
+            filmId:
+              type: number
+              example: 01
+            filmData:
+              $ref: '#/components/schemas/createNewFilm'
+    createdFilmShort:
+          type: object
+
+          properties:
+            filmId:
+              type: number
+              example: 01
+            properties:
+              title:
+                type: string
+                example: Один дома
+            filmDate:
+              type: Date
+              example: 12/02/23
+            genre:
+              type: GenreType[]
+              example: comedy, family
+            preview:
+              type: string
+              example: https://www.kinopoisk.ru/film/8124/
+            user:
+              $ref: '#/components/schemas/user'
+            poster:
+              type: string
+              example: poster_homealone.jpg
+            commentsCount:
+              type: number
+              example: 0 #TODO
+    promoFilm:
+          type: object
+
+          properties:
+            promo:
+              type: boolean
+              example: true
+            filmId:
+              type: number
+              example: 01
+            filmData:
+              $ref: '#/components/schemas/createdFilmFull'
+
+    towatchFilm:
+          type: object
+
+          properties:
+            towatch:
+              type: boolean
+              example: true
+            filmId:
+              type: number
+              example: 01
+            filmData:
+              $ref: '#/components/schemas/createdFilmFull'
+    comment:
+          type: object
+
+          properties:
+            idComment:
+              type: number
+              example: 01
+            textComment:
+              type: number
+              example: Отличный фильм!
+            userRating:
+              type: number
+              example: 8
+            dateComment:
+              type: number
+              example: 12/02/23
+            authorComment:
+              type: number
+              example: Иван

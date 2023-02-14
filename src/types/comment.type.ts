@@ -1,8 +1,8 @@
 import { User } from './user.type';
 
 export type Comment = {
-  text: string;
+  textComment: string;
   userRating: number;
   dateComment: Date;
-  author: User;
+  authorComment: User;
 }
