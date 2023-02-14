@@ -7,4 +7,6 @@ export interface GenreServiceInterface {
   findByGenreId(genreId: string): Promise<DocumentType<GenreEntity> | null>;
   findByGenreName(genreName: string): Promise<DocumentType<GenreEntity> | null>;
   findByGenreNameOrCreate(genreName: string, dto: CreateGenreDto): Promise<DocumentType<GenreEntity>>;
+  find(): Promise<DocumentType<GenreEntity>[]>;
+
 }
