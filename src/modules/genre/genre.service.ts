@@ -5,6 +5,8 @@ import { Component } from '../../types/component.types.js';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { GenreEntity } from './genre.entity.js';
 import CreateGenreDto from './dto/create-genre.dto.js';
+import {MAX_GENRE_COUNT} from './genre.constant';
+import { SortType } from '../../types/sort-type.enum.js';
 
 @injectable()
 export default class GenreService implements GenreServiceInterface {
@@ -35,5 +37,29 @@ export default class GenreService implements GenreServiceInterface {
     }
 
     return this.create(dto);
+
+  }
+
+  public async find(): Promise<DocumentType<GenreEntity>[]> {
+    return this.genreModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'films',
+            let: { genreId: '$_id'},
+            pipeline: [
+              { $match: { $expr: { $in: ['$$genreId', '$genres'] } } },
+              { $project: { _id: 1}}
+            ],
+            as: 'films'
+          },
+        },
+        { $addFields:
+          { id: { $toString: '$_id'}, filmCount: { $size: '$films'} }
+        },
+        { $unset: 'films' },
+        { $limit: MAX_GENRE_COUNT},
+        { $sort: { filmCount: SortType.Down } }
+      ]).exec();
   }
 }
