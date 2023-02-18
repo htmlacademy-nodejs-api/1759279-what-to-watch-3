@@ -1,4 +1,5 @@
 export default class CreateFilmDto {
+  filmId!: string;
   title!: string;
   description!: string;
   filmDate!: Date;
