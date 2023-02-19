@@ -9,11 +9,12 @@ import UpdateFilmDto from './dto/update-film.dto.js';
 import { DEFAULT_FILM_COUNT } from './film.constant.js';
 import { SortType } from '../../types/sort-type.enum.js';
 
+
 @injectable()
 export default class FilmService implements FilmServiceInterface {
   constructor(
     @inject(Component.LoggerInterface) private readonly logger: LoggerInterface,
-    @inject(Component.FilmModel) private readonly filmModel: types.ModelType<FilmEntity>
+    @inject(Component.FilmModel) private readonly filmModel: types.ModelType<FilmEntity>,
   ) {}
 
   public async create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>> {

@@ -16,6 +16,9 @@ export interface FilmEntity extends defaultClasses.Base {}
 export class FilmEntity extends defaultClasses.TimeStamps {
 
   @prop({trim: true, required: true})
+  public filmId!: string;
+
+  @prop({trim: true, required: true})
   public title!: string;
 
   @prop({trim: true})

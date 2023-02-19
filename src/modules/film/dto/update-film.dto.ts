@@ -1,6 +1,7 @@
 import { GenreType } from '../../../types/genre.type.js';
 
 export default class UpdateFilmDto {
+  public filmId?: string;
   public title?: string;
   public description?: string;
   public filmDate?: Date;

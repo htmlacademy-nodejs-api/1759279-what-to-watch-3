@@ -5,7 +5,7 @@ import { Component } from '../../types/component.types.js';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { GenreEntity } from './genre.entity.js';
 import CreateGenreDto from './dto/create-genre.dto.js';
-import {MAX_GENRE_COUNT} from './genre.constant';
+import {MAX_GENRE_COUNT} from './genre.constant.js';
 import { SortType } from '../../types/sort-type.enum.js';
 
 @injectable()
