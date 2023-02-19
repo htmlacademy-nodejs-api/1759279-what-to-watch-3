@@ -6,13 +6,17 @@ import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {HttpMethod} from '../../types/http-method.enum.js';
 import { FilmServiceInterface } from './film-service.interface.js';
-import {StatusCodes} from 'http-status-codes';
 import FilmResponse from './response/film.response.js';
 import {fillDTO} from '../../utils/common.js';
 import CreateFilmDto from './dto/create-film.dto';
-import HttpError from '../../common/errors/http-error.js';
 import UpdateFilmDto from './dto/update-film.dto.js';
+import {CommentServiceInterface} from '../comment/comment-service.interface.js';
+import CommentResponse from '../comment/response/comment.response.js';
 import FilmPromoResponse from './response/film-promo.response.js';
+import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.middleware.js';
+import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
+import {DocumentExistsMiddleware} from '../../common/middlewares/document-exists.middleware.js';
+import { FilmPromoMiddleware } from '../../common/middlewares/film-promo.middleware.js';
 
 type ParamsGetFilm = {
   filmId: string;
@@ -23,20 +27,67 @@ export default class FilmController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
     @inject(Component.FilmServiceInterface) private readonly filmService: FilmServiceInterface,
+    @inject(Component.CommentServiceInterface) private readonly commentService: CommentServiceInterface
   ) {
     super(logger);
 
     this.logger.info('Register routes for FilmController…');
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Get, handler: this.show});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Delete, handler: this.delete});
-    this.addRoute({path: '/:filmId', method: HttpMethod.Patch, handler: this.update});
-    // this.addRoute({path: '/towatch', method: HttpMethod.Get, handler: this.toWatchList});
-    // this.addRoute({path: '/towatch', method: HttpMethod.Post, handler: this.createToWatchListFilm});
-    // this.addRoute({path: '/towatch/:filmId', method: HttpMethod.Delete, handler: this.deleteToWatchListFilm});
-    this.addRoute({path: '/promo/:filmId', method: HttpMethod.Get, handler: this.showPromo});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateFilmDto)]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Get,
+      handler: this.show,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Delete,
+      handler: this.delete,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Patch,
+      handler: this.update,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new ValidateDtoMiddleware(UpdateFilmDto),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:filmsId/comments',
+      method: HttpMethod.Get,
+      handler: this.getComments,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
+
+    this.addRoute({
+      path: '/:filmId',
+      method: HttpMethod.Get,
+      handler: this.showPromo,
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+        new FilmPromoMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
+    });
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
@@ -59,14 +110,6 @@ export default class FilmController extends Controller {
     const {filmId} = params;
     const film = await this.filmService.findById(filmId);
 
-    if (!film){
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Film with id ${filmId} not found`,
-        'FilmController'
-      );
-    }
-
     this.ok(res, fillDTO(FilmResponse,film));
   }
 
@@ -77,13 +120,7 @@ export default class FilmController extends Controller {
     const {filmId} = params;
     const film = await this.filmService.deleteById(filmId);
 
-    if (!film) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Film with id ${filmId} not found.`,
-        'FilmController'
-      );
-    }
+    await this.commentService.deleteByFilmId(filmId);
 
     this.noContent(res, film);
   }
@@ -94,48 +131,8 @@ export default class FilmController extends Controller {
   ): Promise<void> {
     const updatedFilm = await this.filmService.updateById(params.filmId, body);
 
-    if (!updatedFilm) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Film with id ${params.filmId} not found.`,
-        'FilmController'
-      );
-    }
-
     this.ok(res, fillDTO(FilmResponse, updatedFilm));
   }
-
-  // public async toWatchList(_req: Request, res: Response): Promise<void> {
-  //   const films = await this.filmService.find();
-  //   this.ok(res, fillDTO(FilmResponse, films));
-  // } //TODO
-
-  // public async createToWatchListFilm(
-  //   {body}: Request<Record<string, unknown>, Record<string, unknown>, CreateFilmDto>,
-  //   res: Response): Promise<void> {
-  //   const result = await this.filmService.create(body);
-  //   const film = await this.filmService.findById(result.id);
-  //   this.created(res, fillDTO(FilmResponse, film));
-  // } //TODO
-
-  // public async deleteToWatchListFilm(
-  //   {params}: Request<core.ParamsDictionary | ParamsGetFilm>,
-  //   res: Response
-  // ): Promise<void> {
-  //   const {filmId} = params;
-  //   const film = await this.filmService.deleteById(filmId);
-
-  //   if (!film) {
-  //     throw new HttpError(
-  //       StatusCodes.NOT_FOUND,
-  //       `Film with id ${filmId} not found.`,
-  //       'FilmController'
-  //     );
-  //   }
-
-  //   this.noContent(res, film);
-  // } //TODO
-
 
   public async showPromo(
     {params}: Request<core.ParamsDictionary | ParamsGetFilm>,
@@ -144,15 +141,17 @@ export default class FilmController extends Controller {
     const {filmId} = params;
     const film = await this.filmService.findById(filmId);
 
-    if (!film){
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Film with id ${filmId} not found`,
-        'FilmController'
-      );
-    }
-
     this.ok(res, fillDTO(FilmPromoResponse,film));
   } //TODO
+
+
+  public async getComments(
+    {params}: Request<core.ParamsDictionary | ParamsGetFilm, object, object>,
+    res: Response
+  ): Promise<void> {
+
+    const comments = await this.commentService.findByFilmId(params.filmId);
+    this.ok(res, fillDTO(CommentResponse, comments));
+  }
 }
 
