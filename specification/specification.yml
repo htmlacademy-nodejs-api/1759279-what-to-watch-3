@@ -16,56 +16,12 @@ tags:
     description: Действия с комментариями.
   - name: users
     description: Действия с пользователем.
+  - name: watchListFilms
+    description: Действия со списком "К просмотру".
+
 paths:
 
-  /users/register:
-     post:
-      tags:
-         - users
-      summary: Регистрация пользователя
-      description: Регистрирует нового пользователя.
-      requestBody:
-         description: Информация для создания нового пользователя.
-         content:
-           application/json:
-             schema:
-               $ref: '#/components/schemas/createUser'
-         required: true
-
-      responses:
-        "201":
-          description: Пользователь зарегистрирован. Объект пользователя.
-          content:
-            application/json:
-              schema:
-                $ref:'#/components/schemas/user'
-
-        "409":
-          description: Пользователь с таким email уже существует.
-
-
-  /users/login:
-     post:
-      tags:
-        - users
-      summary: Авторизация пользователя
-      description: Авторизует пользователя на основе логина и пароля
-
-     get:
-      tags:
-        - users
-      summary: Проверка состояния пользователя
-      description: Возвращает информацию по авторизованному пользователю
-
-  /users/{userId}/avatar:
-     post:
-      tags:
-        - users
-      summary: Загрузить изображение аватара
-      description: Загружает изображение аватара пользователя. Изображение
-         аватара должно быть в формате `png` или `jpg`.
-
-  /films: #TODO (?offset=60&limit=0)
+  /films:
     get:
       tags:
         - films
@@ -90,6 +46,139 @@ paths:
                type: array
                items:
                 $ref: '#/components/schemas/createdFilmShort'
+      responses:
+        204:
+          description: Отображен список фильмов
+
+    post:
+      tags:
+        - films
+      summary: Создание карточки фильма
+      description: Получает карточку фильма.
+      requestBody:
+         description: Создание карточки фильма.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createdFilmFull'
+         required: true
+      responses:
+        204:
+          description: Карточка фильма создана
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+
+
+  /films/{filmId}:
+    get:
+      tags:
+        - films
+      summary: Отображение карточки фильма
+      description: Отображает карточку фильма.
+      requestBody:
+         description: Карточка фильма.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createdFilmFull'
+         required: true
+      responses:
+        204:
+          description: Карточка фильма получена
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+
+    delete:
+      tags:
+        - films
+      summary: Удаление карточки фильма
+      description: Удаляет карточку фильма.
+      requestBody:
+         description: Карточка фильма удаляется.
+         required: true
+      responses:
+        204:
+          description: Карточка фильма удалена
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+
+    patch:
+      tags:
+        - films
+      summary: Редактирование карточки фильма
+      description: Редактирует карточку фильма.
+      requestBody:
+         description: Информация об изменениях в карточке.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createdFilmFull'
+         required: true
+      responses:
+        200:
+          description: Данные фильма успешно обновлены.
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+
+  /films/{filmId}/comments:
+    get:
+      tags:
+        - films
+      summary: Получение комментариев к фильму.
+      description: Получает список комментариев к фильму.
+      requestBody:
+         description: Комментарии к фильму.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/comment'
+         required: true
+      responses:
+        200:
+          description: Комментарии к фильму получены.
+        400:
+          description: Некорректный запрос.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+
+  /films/{filmId}/promo:
+    get:
+      tags:
+        - films
+      summary: Получение промо-фильма.
+      description: Получает промо-фильм.
+      requestBody:
+         description: Промо-фильм.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/promoFilm'
+         required: true
+      responses:
+        200:
+          description: Это промо-фильм.
+        400:
+          description: Некорректный запрос.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+        502:
+          description: Указанный фильм не является промо-фильмом
 
   /films/findByGenre?genre=value:
     get:
@@ -141,51 +230,85 @@ paths:
         "409":
             description: Поля заполнены неверно. Невозможно создать фильм.
 
-
-  /films/{filmId}:
+  /genres:
     get:
       tags:
-        - films
-      summary: Получение карточки фильма
-      description: Получает карточку фильма.
+        - genres
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: number
+            example: 60
+        - in: query
+          name: limit
+          schema:
+            type: number
+            example: 0
+      summary: Получение списка фильмов определенного жанра
+      description: Получает список карточек с фильмами определенного жанра.
       requestBody:
-         description: Информация о фильме.
+         description: Список фильмов определенного жанра.
          content:
            application/json:
              schema:
-               $ref: '#/components/schemas/createdFilmFull'
-         required: true
-    patch:
-      tags:
-        - films
-      summary: Редактирование карточки фильма
-      description: Редактирует карточку фильма.
-      requestBody:
-         description: Информация об изменениях в карточке.
-         content:
-           application/json:
-             schema:
-               $ref: '#/components/schemas/createdFilmFull'
-         required: true
+               type: array
+               items:
+                $ref: '#/components/schemas/createdFilmShort'
       responses:
         204:
-          description: Карточка фильма обновлена
-        401:
-          description: Пользователь не авторизован, обновить карточку невозможно.
-        409:
-          description: Введены некорректные данные, обновить карточку невозможно.
+          description: Отображен список фильмов
 
-    delete:
+
+
+
+
+  /users/register:
+     post:
       tags:
-        - films
-      summary: Удаление карточки фильма
-      description: Удаляет карточку фильма.
+         - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя.
       requestBody:
-         description: Информация об изменениях в карточке.
+         description: Информация для создания нового пользователя.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createUser'
          required: true
+
       responses:
-        204:
-          description: Карточка фильма удалена
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref:'#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+
+  /users/login:
+     post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля
+
+     get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+  /users/{userId}/avatar:
+     post:
+      tags:
+        - users
+      summary: Загрузить изображение аватара
+      description: Загружает изображение аватара пользователя. Изображение
+         аватара должно быть в формате `png` или `jpg`.
 
 
 components:
@@ -220,6 +343,7 @@ components:
             email:
               type: string
               example: keks@htmlacademy.ru
+
     createNewFilm:
           type: object
 
@@ -265,6 +389,7 @@ components:
             colorBackgroundImage:
               type: string
               example: red
+
     createdFilmFull:
           type: object
 
@@ -335,7 +460,7 @@ components:
               type: number
               example: 01
             textComment:
-              type: number
+              type: string
               example: Отличный фильм!
             userRating:
               type: number

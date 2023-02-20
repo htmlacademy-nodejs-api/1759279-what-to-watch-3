@@ -1,6 +1,7 @@
 import typegoose, {defaultClasses, getModelForClass, Ref} from '@typegoose/typegoose';
 import { UserEntity } from '../user/user.entity.js';
 import { GenreEntity } from '../genre/genre.entity.js';
+import { RATING_DEFAULT } from './film.constant.js';
 
 
 const {prop, modelOptions} = typegoose;
@@ -38,7 +39,10 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   @prop()
   public filmYear!: number;
 
-  @prop()
+  @prop({
+    required: false,
+    default: RATING_DEFAULT,
+  })
   public rating!: number;
 
   @prop()
