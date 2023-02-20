@@ -14,6 +14,8 @@ import * as core from 'express-serve-static-core';
 import { FilmServiceInterface } from '../film/film-service.interface.js';
 import FilmResponse from '../film/response/film.response.js';
 import { RequestQuery } from '../../types/request-query.type.js';
+import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.middleware.js';
+import {ValidateDtoMiddleware} from '../../common/middlewares/validate-dto.middleware.js';
 
 type ParamsGetGenre = {
   genreId: string;
@@ -31,8 +33,18 @@ export default class GenreController extends Controller {
     this.logger.info('Register routes for GenreController…');
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: '/:genreId/films', method: HttpMethod.Get, handler: this.getFilmsFromGenre});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateGenreDto)]
+    });
+    this.addRoute({
+      path: '/:genreId/films',
+      method: HttpMethod.Get,
+      handler: this.getFilmsFromGenre,
+      middlewares: [new ValidateObjectIdMiddleware('genreId')]
+    });
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
