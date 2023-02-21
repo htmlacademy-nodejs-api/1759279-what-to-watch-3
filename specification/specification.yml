@@ -63,7 +63,7 @@ paths:
                $ref: '#/components/schemas/createdFilmFull'
          required: true
       responses:
-        204:
+        201:
           description: Карточка фильма создана
         400:
           description: Некорректный запрос.
@@ -71,7 +71,6 @@ paths:
           description: Пользователь не авторизован.
         404:
           description: Фильм не найден, проверьте введенные данные.
-
 
   /films/{filmId}:
     get:
@@ -175,60 +174,12 @@ paths:
           description: Это промо-фильм.
         400:
           description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
         404:
           description: Фильм не найден, проверьте введенные данные.
         502:
           description: Указанный фильм не является промо-фильмом
-
-  /films/findByGenre?genre=value:
-    get:
-      tags:
-        - films
-      parameters:
-        - in: query
-          name: offset
-          schema:
-            type: number
-            example: 60
-        - in: query
-          name: limit
-          schema:
-            type: number
-            example: 0
-      summary: Получение списка фильмов по жанрам
-      description: Получает список карточек с фильмами определенного жанра.
-      requestBody:
-         description: Список фильмов определенного жанра.
-         content:
-           application/json:
-             schema:
-               type: array
-               items:
-                $ref: '#/components/schemas/createdFilmShort'
-
-  /films/create:
-    post:
-      tags:
-        - films
-      summary: Добавление нового фильма
-      description: Добавляет новый фильм.
-      requestBody:
-         description: Информация для создания нового фильма.
-         content:
-           application/json:
-             schema:
-               $ref: '#/components/schemas/createNewFilm'
-         required: true
-      responses:
-        "201":
-           description: Новый фильм создан.
-           content:
-             application/json:
-               schema:
-                 $ref: '#/components/schemas/createdFilmFull'
-
-        "409":
-            description: Поля заполнены неверно. Невозможно создать фильм.
 
   /genres:
     get:
@@ -256,12 +207,62 @@ paths:
                items:
                 $ref: '#/components/schemas/createdFilmShort'
       responses:
-        204:
-          description: Отображен список фильмов
+        200:
+          description: Отображен список жанров
 
+  /genres/{filmId}:
+    get:
+      tags:
+        - genres
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: number
+            example: 60
+        - in: query
+          name: limit
+          schema:
+            type: number
+            example: 0
+      summary: Получение списка фильмов определенного жанра
+      description: Получает список карточек с фильмами определенного жанра.
+      requestBody:
+         description: Список фильмов определенного жанра.
+         content:
+           application/json:
+             schema:
+               type: array
+               items:
+                $ref: '#/components/schemas/createdFilmShort'
+      responses:
+        200:
+          description: Отображен список фильмов определенного жанра
+        400:
+          description: Некорректный запрос.
 
-
-
+  /comments:
+    post:
+      tags:
+        - films
+      summary: Создание комментария к фильму
+      description: Создает комментарий к фильму.
+      requestBody:
+         description: Создание комментария.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/comment'
+         required: true
+      responses:
+        201:
+          description: Карточка фильма создана
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
 
   /users/register:
      post:
@@ -288,7 +289,6 @@ paths:
         "409":
           description: Пользователь с таким email уже существует.
 
-
   /users/login:
      post:
       tags:
@@ -310,7 +310,99 @@ paths:
       description: Загружает изображение аватара пользователя. Изображение
          аватара должно быть в формате `png` или `jpg`.
 
+  /watchListFilms:
+    get:
+      tags:
+        - films
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: number
+            example: 60
+        - in: query
+          name: limit
+          schema:
+            type: number
+            example: 0
+      summary: Получение списка фильмов "К просмотру"
+      description: Получает список карточек с фильмами "К просмотру".
+      requestBody:
+         description: Список фильмов "К просмотру".
+         content:
+           application/json:
+             schema:
+               type: array
+               items:
+                $ref: '#/components/schemas/createdFilmShort'
+      responses:
+        204:
+          description: Отображен список фильмов
+        401:
+          description: Пользователь не авторизован.
 
+    post:
+      tags:
+        - films
+      summary: Создание карточки фильма
+      description: Получает карточку фильма.
+      requestBody:
+         description: Создание карточки фильма.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createdFilmFull'
+         required: true
+      responses:
+        201:
+          description: Карточка фильма "К просмотру" добавлена
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+
+  /watchListFilms/{filmId}:
+    get:
+      tags:
+        - films
+      summary: Отображение карточки фильма
+      description: Отображает карточку фильма.
+      requestBody:
+         description: Карточка фильма.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/createdFilmFull'
+         required: true
+      responses:
+        201:
+          description: Карточка фильма создана
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
+
+    delete:
+      tags:
+        - films
+      summary: Удаление карточки фильма
+      description: Удаляет карточку фильма.
+      requestBody:
+         description: Карточка фильма удаляется.
+         required: true
+      responses:
+        204:
+          description: Карточка фильма удалена
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+        404:
+          description: Фильм не найден, проверьте введенные данные.
 components:
   schemas:
     createUser:
@@ -426,7 +518,7 @@ components:
               example: poster_homealone.jpg
             commentsCount:
               type: number
-              example: 0 #TODO
+              example: 0
     promoFilm:
           type: object
 

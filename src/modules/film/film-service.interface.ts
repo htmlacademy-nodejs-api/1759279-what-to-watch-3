@@ -8,7 +8,7 @@ import { FilmPromoInterface } from '../../types/promo-film.interface.js';
 export interface FilmServiceInterface extends DocumentExistsInterface, FilmPromoInterface {
   create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>>;
   findById(filmId: string): Promise<DocumentType<FilmEntity> | null>;
-  find(): Promise<DocumentType<FilmEntity>[]>;
+  find(filmId?: string, count?: number): Promise<DocumentType<FilmEntity>[]>;
   deleteById(filmId: string): Promise<DocumentType<FilmEntity> | null>;
   updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null>;
   findByGenreId(GenreId: string, count?: number): Promise<DocumentType<FilmEntity>[]>;

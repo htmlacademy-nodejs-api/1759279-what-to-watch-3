@@ -18,6 +18,7 @@ import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.mid
 import {DocumentExistsMiddleware} from '../../common/middlewares/document-exists.middleware.js';
 import { FilmPromoMiddleware } from '../../common/middlewares/film-promo.middleware.js';
 import {PrivateRouteMiddleware} from '../../common/middlewares/private-route.middleware.js';
+import { RequestQuery } from '../../types/request-query.type.js';
 
 
 type ParamsGetFilm = {
@@ -90,6 +91,7 @@ export default class FilmController extends Controller {
       method: HttpMethod.Get,
       handler: this.showPromo,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('filmId'),
         new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
         new FilmPromoMiddleware(this.filmService, 'Film', 'filmId'),
@@ -97,9 +99,12 @@ export default class FilmController extends Controller {
     });
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const films = await this.filmService.find();
-    this.ok(res, fillDTO(FilmResponse, films)); //TODO - добавить лимит на количество фильмов - 60
+  public async index(
+    {params, query}: Request<core.ParamsDictionary | ParamsGetFilm, unknown, unknown, RequestQuery>,
+    res: Response
+  ):Promise<void> {
+    const films = await this.filmService.find(params.filmId, query.limit);
+    this.ok(res, fillDTO(FilmResponse, films));
   }
 
 
@@ -151,7 +156,7 @@ export default class FilmController extends Controller {
     const film = await this.filmService.findById(filmId);
 
     this.ok(res, fillDTO(FilmPromoResponse,film));
-  } //TODO
+  }
 
 
   public async getComments(

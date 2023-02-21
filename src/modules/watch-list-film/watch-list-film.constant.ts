@@ -1,0 +1,1 @@
+export const MAX_WATCH_LIST_FILM_COUNT = 60;
