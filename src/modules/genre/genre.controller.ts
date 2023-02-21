@@ -35,9 +35,11 @@ export default class GenreController extends Controller {
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
     this.addRoute({
       path: '/',
-      method: HttpMethod.Post,
+      method: HttpMethod.Get,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateGenreDto)]
+      middlewares: [
+        new ValidateDtoMiddleware(CreateGenreDto)
+      ]
     });
     this.addRoute({
       path: '/:genreId/films',

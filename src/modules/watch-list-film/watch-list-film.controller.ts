@@ -12,6 +12,7 @@ import {fillDTO} from '../../utils/common.js';
 import CreateFilmDto from './dto/create-watch-list-film.dto';
 import HttpError from '../../common/errors/http-error.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.middleware.js';
+import {PrivateRouteMiddleware} from '../../common/middlewares/private-route.middleware.js';
 
 type ParamsGetFilm = {
   filmId: string;
@@ -27,13 +28,25 @@ export default class WatchListFilmController extends Controller {
 
     this.logger.info('Register routes for FilmController…');
 
-    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('filmId'),
+      ]
+
+    });
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
     this.addRoute({
       path: '/:filmId',
       method: HttpMethod.Delete,
       handler: this.delete,
-      middlewares: [new ValidateObjectIdMiddleware('filmId')]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('filmId'),
+      ]
     });
   }
 
