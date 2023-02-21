@@ -1,1 +1,1 @@
-export const MAX_GENRE_COUNT = 9;
+export const MAX_GENRE_COUNT = 60;

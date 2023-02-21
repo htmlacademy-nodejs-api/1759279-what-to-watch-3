@@ -13,6 +13,10 @@ import CreateFilmDto from './dto/create-watch-list-film.dto';
 import HttpError from '../../common/errors/http-error.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.middleware.js';
 import {PrivateRouteMiddleware} from '../../common/middlewares/private-route.middleware.js';
+import { RequestQuery } from '../../types/request-query.type.js';
+import FilmResponse from '../film/response/film.response.js';
+import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
+
 
 type ParamsGetFilm = {
   filmId: string;
@@ -38,7 +42,16 @@ export default class WatchListFilmController extends Controller {
       ]
 
     });
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateFilmDto)
+      ]
+    });
+
     this.addRoute({
       path: '/:filmId',
       method: HttpMethod.Delete,
@@ -50,9 +63,12 @@ export default class WatchListFilmController extends Controller {
     });
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const films = await this.WatchListfilmService.find();
-    this.ok(res, fillDTO(WatchListFilmResponse, films)); //TODO - добавить лимит на количество фильмов - 60
+  public async index(
+    {params, query}: Request<core.ParamsDictionary | ParamsGetFilm, unknown, unknown, RequestQuery>,
+    res: Response
+  ):Promise<void> {
+    const films = await this.WatchListfilmService.find(params.filmId, query.limit);
+    this.ok(res, fillDTO(FilmResponse, films));
   }
 
   public async create(
