@@ -15,6 +15,7 @@ export interface GenreEntity extends defaultClasses.Base {}
 export class GenreEntity extends defaultClasses.TimeStamps implements GenreType {
   @prop({required: true, trim: true})
   public genreType!: string;
+
 }
 
 export const GenreModel = getModelForClass(GenreEntity);

@@ -13,6 +13,8 @@ import { FilmServiceInterface } from '../film/film-service.interface.js';
 import FilmResponse from '../film/response/film.response.js';
 import { RequestQuery } from '../../types/request-query.type.js';
 import { ValidateObjectIdMiddleware } from '../../common/middlewares/validate-objectid.middleware.js';
+import {ConfigInterface} from '../../common/config/config.interface.js';
+
 
 type ParamsGetGenre = {
   genreId: string;
@@ -22,10 +24,11 @@ type ParamsGetGenre = {
 export default class GenreController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.GenreServiceInterface) private readonly genreService: GenreServiceInterface,
     @inject(Component.FilmServiceInterface) private readonly filmService: FilmServiceInterface
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for GenreController…');
 

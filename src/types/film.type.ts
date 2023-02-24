@@ -1,6 +1,5 @@
 import { User } from './user.type.js';
 import { GenreType } from './genre.type.js';
-// import { Actors } from './actors.type.js';
 
 export type FilmType = {
   title: string;

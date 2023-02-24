@@ -181,6 +181,34 @@ paths:
         502:
           description: Указанный фильм не является промо-фильмом
 
+  /films/{filmId}/poster:
+     post:
+      tags:
+        - films
+      summary: Загрузить постер к фильму
+      description: Загружает постер к фильму
+      responses:
+        201:
+          description: Постер к фильму загружен
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+
+  /films/{filmId}/images/backgroundimage:
+     post:
+      tags:
+        - films
+      summary: Загрузить фоновое изображение карточки фильма
+      description: Загружает фоновое изображение карточки фильма
+      responses:
+        201:
+          description: Фоновое изображение к фильму загружено
+        400:
+          description: Некорректный запрос.
+        401:
+          description: Пользователь не авторизован.
+
   /genres:
     get:
       tags:
@@ -309,6 +337,11 @@ paths:
       summary: Загрузить изображение аватара
       description: Загружает изображение аватара пользователя. Изображение
          аватара должно быть в формате `png` или `jpg`.
+      responses:
+        201:
+          description: Постер к фильму загружен
+        400:
+          description: Некорректный запрос.
 
   /watchListFilms:
     get:

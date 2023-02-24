@@ -2,8 +2,6 @@ import {IsArray, IsDateString, IsMongoId, MaxLength, MinLength, IsInt} from 'cla
 
 export default class CreateFilmDto {
 
-  filmId!: string;
-
   @MinLength(2, {message: 'Minimum title length must be 2'})
   @MaxLength(100, {message: 'Maximum title length must be 100'})
   public title!: string;
@@ -44,7 +42,6 @@ export default class CreateFilmDto {
   @IsMongoId({message: 'userId field must be valid an id'})
   public userId!: string;
 
-  public poster!: string;
   public backgroundImage!: string;
   public colorBackgroundImage!: string;
 }
