@@ -18,7 +18,6 @@ export default class DatabaseService implements DatabaseInterface {
   }
 
   public async disconnect(): Promise<void> {
-    // this.logger.info('Try to connect to MongoDB...');
     await mongoose.disconnect();
     this.logger.info('Database connection closed.');
   }

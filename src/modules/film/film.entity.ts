@@ -71,7 +71,7 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   })
   public user: Ref<UserEntity>;
 
-  @prop()
+  @prop({default: ''})
   public poster!: string;
 
   @prop()

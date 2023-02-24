@@ -8,9 +8,6 @@ export default class CommentResponse {
   @Expose()
   public text!: string;
 
-  // @Expose()
-  // public userRating!: number;
-
   @Expose({ name: 'createdAt'})
   public postDate!: string;
 

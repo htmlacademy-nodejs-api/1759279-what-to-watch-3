@@ -3,5 +3,4 @@ export type User = {
   avatarPath: string;
   firstname: string;
   lastname: string;
-  // password: string;
 }

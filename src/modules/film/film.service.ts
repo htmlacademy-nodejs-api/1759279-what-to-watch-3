@@ -61,11 +61,6 @@ export default class FilmService implements FilmServiceInterface {
 
   public async incCommentCount(filmId: string, ): Promise<DocumentType<FilmEntity> | null> {
 
-    //const existedFilm = await this.findById(filmId);
-    //const newRating = ((existedFilm.rating * existedFilm.commentsCount) + userRating) / (existedFilm.commentsCount + 1);
-    //ошибка 'existedFilm' is possibly 'null'.
-    //userRating: number из параметров убрала
-
     return this.filmModel
       .findByIdAndUpdate(filmId, {'$inc': {
         commentCount: 1,

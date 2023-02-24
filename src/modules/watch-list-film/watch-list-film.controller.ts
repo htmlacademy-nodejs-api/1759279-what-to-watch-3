@@ -16,6 +16,7 @@ import {PrivateRouteMiddleware} from '../../common/middlewares/private-route.mid
 import { RequestQuery } from '../../types/request-query.type.js';
 import FilmResponse from '../film/response/film.response.js';
 import { ValidateDtoMiddleware } from '../../common/middlewares/validate-dto.middleware.js';
+import {ConfigInterface} from '../../common/config/config.interface.js';
 
 
 type ParamsGetFilm = {
@@ -26,9 +27,10 @@ type ParamsGetFilm = {
 export default class WatchListFilmController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.WatchListFilmServiceInterface) private readonly WatchListfilmService: WatchListFilmServiceInterface,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for FilmController…');
 
